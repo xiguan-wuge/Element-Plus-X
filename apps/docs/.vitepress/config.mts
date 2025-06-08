@@ -4,7 +4,8 @@ import { defineConfig } from 'vitepress'
 // 另一种 demo 插件
 // import { vitepressDemoPlugin } from 'vitepress-demo-plugin'
 import { groupIconMdPlugin, groupIconVitePlugin } from 'vitepress-plugin-group-icons'
-
+import path from 'path'
+console.log('x-path', path.resolve(__dirname, '../../../packages/components/src/index.ts'))
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'Element-Plus-X',
@@ -31,10 +32,10 @@ export default defineConfig({
   // },
   rewrites: {
     // 'docs/(.*)': '(.*)',
-    // 'packages/icons/docs/(.*)': 'components/icons/(.*)',
-    // 'packages/vue-element-plus-x/src/:path/(.*)': 'components/:path/(.*)',
-    // 'packages/utils/src/:path/(.*)': 'utils/:path/(.*)',
-    // 'docs/guide/:path/(.*)': 'guide/:path/(.*)',
+    'packages/icons/docs/(.*)': 'components/icons/(.*)',
+    'packages/vue-element-plus-x/src/:path/(.*)': 'components/:path/(.*)',
+    'packages/utils/src/:path/(.*)': 'utils/:path/(.*)',
+    'docs/guide/:path/(.*)': 'guide/:path/(.*)',
   },
   head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
   themeConfig: {
@@ -207,6 +208,12 @@ export default defineConfig({
     ],
     ssr: {
       noExternal: ['element-plus']
+    },
+    resolve: {
+    alias: {
+      'vue-element-plus-x': path.resolve(__dirname, '../../../packages/components/src/index.ts'),
     }
+  }
   },
+  
 })

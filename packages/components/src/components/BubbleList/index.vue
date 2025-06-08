@@ -5,6 +5,7 @@ import type { BubbleListProps } from './types.d.ts'
 import { ArrowDownBold } from '@element-plus/icons-vue'
 import useScrollDetector from '../../utils/useScrollDetector.ts'
 import Bubble from '../Bubble/index.vue'
+import Prompts from '../Prompts/index.vue'
 import loadingBg from './loading.vue'
 
 const props = withDefaults(defineProps<BubbleListProps<T>>(), {
@@ -19,7 +20,7 @@ const props = withDefaults(defineProps<BubbleListProps<T>>(), {
   },
   btnLoading: true,
   btnColor: '#409EFF',
-  btnIconSize: 24
+  btnIconSize: 24,
 })
 
 const emits = defineEmits(['complete'])
@@ -118,7 +119,8 @@ function scrollToBubble(index: number) {
   if (!container)
     return
 
-  const bubbles = container.querySelectorAll('.el-bubble')
+  // const bubbles = container.querySelectorAll('.el-bubble')
+  const bubbles = container.querySelectorAll('.el-bubble-list__item')
   if (index >= bubbles.length)
     return
 
@@ -141,7 +143,8 @@ function scrollToBubble(index: number) {
 // 组件内部触发方法，跟随打字器滚动，滚动底部
 function autoScroll() {
   if (scrollContainer.value) {
-    const listBubbles = scrollContainer.value!.querySelectorAll('.el-bubble-content-wrapper')
+    // const listBubbles = scrollContainer.value!.querySelectorAll('.el-bubble-content-wrapper')
+    const listBubbles = scrollContainer.value!.querySelectorAll('.el-bubble-list__item')
     // 如果页面上有监听节点，先移除
     if (resizeObserver.value) {
       resizeObserver.value.disconnect()
@@ -235,45 +238,51 @@ defineExpose({
   >
     <!-- 如果给 BubbleList 的 item 传入 md 配置，则按照 item 的 md 配置渲染 -->
     <!-- 否则，则按照 BubbleList 的 md 配置渲染 -->
-    <Bubble
+    <template
       v-for="(item, index) in list"
       :key="index"
-      :content="item.content"
-      :placement="item.placement"
-      :loading="item.loading"
-      :shape="item.shape"
-      :variant="item.variant"
-      :is-markdown="item.isMarkdown"
-      :is-fog="item.isFog"
-      :typing="item.typing"
-      :max-width="item.maxWidth"
-      :avatar="item.avatar"
-      :avatar-size="item.avatarSize"
-      :avatar-gap="item.avatarGap"
-      :avatar-shape="item.avatarShape"
-      :avatar-icon="item.avatarIcon"
-      :avatar-src-set="item.avatarSrcSet"
-      :avatar-alt="item.avatarAlt"
-      :avatar-fit="item.avatarFit"
-      :no-style="item.noStyle"
-      @finish="(instance) => handleBubbleComplete(index, instance)"
     >
-      <template v-if="$slots.avatar" #avatar>
-        <slot name="avatar" :item="item" />
-      </template>
-      <template v-if="$slots.header" #header>
-        <slot name="header" :item="item" />
-      </template>
-      <template v-if="$slots.content" #content>
-        <slot name="content" :item="item" />
-      </template>
-      <template v-if="$slots.footer" #footer>
-        <slot name="footer" :item="item" />
-      </template>
-      <template v-if="$slots.loading" #loading>
-        <slot name="loading" :item="item" />
-      </template>
-    </Bubble>
+      <Prompts v-if="item.isPompts" :items="item.promptItems" class="el-bubble-list__item" />
+      <Bubble
+        v-else
+        class="el-bubble-list__item"
+        :content="item.content"
+        :placement="item.placement"
+        :loading="item.loading"
+        :shape="item.shape"
+        :variant="item.variant"
+        :is-markdown="item.isMarkdown"
+        :is-fog="item.isFog"
+        :typing="item.typing"
+        :max-width="item.maxWidth"
+        :avatar="item.avatar"
+        :avatar-size="item.avatarSize"
+        :avatar-gap="item.avatarGap"
+        :avatar-shape="item.avatarShape"
+        :avatar-icon="item.avatarIcon"
+        :avatar-src-set="item.avatarSrcSet"
+        :avatar-alt="item.avatarAlt"
+        :avatar-fit="item.avatarFit"
+        :no-style="item.noStyle"
+        @finish="(instance) => handleBubbleComplete(index, instance)"
+      >
+        <template v-if="$slots.avatar" #avatar>
+          <slot name="avatar" :item="item" />
+        </template>
+        <template v-if="$slots.header" #header>
+          <slot name="header" :item="item" />
+        </template>
+        <template v-if="$slots.content" #content>
+          <slot name="content" :item="item" />
+        </template>
+        <template v-if="$slots.footer" #footer>
+          <slot name="footer" :item="item" />
+        </template>
+        <template v-if="$slots.loading" #loading>
+          <slot name="loading" :item="item" />
+        </template>
+      </Bubble>
+    </template>
 
     <!-- 自定义按钮插槽 默认返回按钮 -->
 

@@ -136,6 +136,7 @@ function isActive(key: string | number) {
 
   .el-prompts-items {
     display: flex;
+    flex-direction: column;
     gap: 12px;
     overflow-x: auto;
     scrollbar-width: none;
