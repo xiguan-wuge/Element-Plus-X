@@ -1,4 +1,6 @@
-export interface BubbleProps {
+import type { PromptsItemsProps } from '../Prompts/types'
+
+export interface BubbleProps<T extends PromptsItemsProps = PromptsItemsProps> {
   content?: string
   reasoning_content?: string
   placement?: 'start' | 'end'
@@ -18,4 +20,6 @@ export interface BubbleProps {
   avatarAlt?: string
   avatarFit?: 'cover' | 'contain' | 'fill' | 'none' | 'scale-down'
   noStyle?: boolean
+  isPrompts?: boolean
+  promptItems?: T[]
 }

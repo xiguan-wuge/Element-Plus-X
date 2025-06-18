@@ -22,9 +22,7 @@ const props = withDefaults(defineProps<BubbleListProps<T>>(), {
   btnColor: '#409EFF',
   btnIconSize: 24,
 })
-
 const emits = defineEmits(['complete'])
-
 /* 在底部时候自动滚动 开始 */
 // 滚动容器的引用
 const scrollContainer = ref<HTMLElement | null>(null)
@@ -56,7 +54,12 @@ const effectiveTriggerIndices = computed(() => {
   return []
 })
 
-// 提取有效索引判断逻辑到独立函数
+/**
+ * @description: 提取有效索引判断逻辑到独立函数
+ * @param {Array} list
+ * @param {number} indices
+ * @return {Array}
+ */
 function getValidIndices(list: T[], indices: number[]) {
   const validIndices: number[] = []
   const invalidIndices: number[] = []
@@ -242,7 +245,7 @@ defineExpose({
       v-for="(item, index) in list"
       :key="index"
     >
-      <Prompts v-if="item.isPompts" :items="item.promptItems" class="el-bubble-list__item" />
+      <Prompts v-if="item.isPrompts" :items="item.promptItems" class="el-bubble-list__item" />
       <Bubble
         v-else
         class="el-bubble-list__item"

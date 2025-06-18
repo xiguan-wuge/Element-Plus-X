@@ -8,11 +8,12 @@ title: 超长文字输入框
 
 <script setup lang="ts">
 const longerValue = `💌 欢迎使用 Element-Plus-X ~`.repeat(30)
+const senderText = ref('')
 </script>
 
 <template>
   <div style="display: flex; flex-direction: column; gap: 12px;">
-    <MentionSender :auto-size="{ minRows: 2, maxRows: 5 }" />
+    <MentionSender v-model="senderText" :auto-size="{ minRows: 2, maxRows: 5 }" />
     <MentionSender v-model="longerValue" />
   </div>
 </template>

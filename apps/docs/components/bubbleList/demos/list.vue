@@ -57,7 +57,7 @@ function generateFakeItems(count: number): listType[] {
     const loading = false
     const shape = 'corner'
     const variant = role === 'ai' ? 'filled' : 'outlined'
-    const isMarkdown = false
+    const isMarkdown = role === 'ai'
     const typing = role === 'ai' ? i === count - 1 : false
     const avatar = role === 'ai'
       ? 'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'
@@ -86,7 +86,7 @@ function addData() {
     key: list.value.length + 1, // 唯一标识
     role: 'ai', // user | ai 自行更据模型定义
     placement: 'start', // start | end 气泡位置
-    content: '消息内容 流式接受的时候，只需要改这个值即可', // 消息内容 流式接受的时候，只需要改这个值即可
+    content: '消息内容 流式接受的时候，只需要改这个值即可 \n # 这是一级标题', // 消息内容 流式接受的时候，只需要改这个值即可
     loading: false, // 当前气泡的加载状态
     shape: 'corner', // 气泡的形状
     variant: 'filled', // 气泡的样式
@@ -134,6 +134,6 @@ function addPrompts() {
     添加数据
   </el-button>
   <el-button @click="addPrompts">
-    添加数据
+    添加Prompts数据
   </el-button>
 </template>
