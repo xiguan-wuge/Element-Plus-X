@@ -27,6 +27,40 @@ async function startSSE() {
   }
 }
 
+// async function startSSE() {
+//   try {
+//     // 创建模拟数据流
+//     const readableStream = new ReadableStream({
+//       start(controller) {
+//         let count = 0
+//         const mockData = [
+//           '你好',
+//           '你好，世界',
+//           '你好，世界！这是一个',
+//           '你好，世界！这是一个模拟数据流演示',
+//         ]
+
+//         const intervalId = setInterval(() => {
+//           if (count < mockData.length) {
+//             const chunk = `data: ${JSON.stringify({ content: mockData[count] })}\n\n`
+//             controller.enqueue(new TextEncoder().encode(chunk))
+//             count++
+//           }
+//           else {
+//             controller.close()
+//             clearInterval(intervalId)
+//           }
+//         }, 1000)
+//       },
+//     })
+
+//     await startStream({ readableStream })
+//   }
+//   catch (err) {
+//     console.error('模拟数据流错误:', err)
+//   }
+// }
+
 // 机器人的 content 计算属性
 const content = computed(() => {
   if (!data.value.length)
