@@ -4,14 +4,23 @@ import type { Ref } from 'vue'
 type ContentEditableAction = () => void
 
 // 封装的 Hooks 函数
-export function useContentEditable(targetRef: Ref<HTMLElement | null>): {
-  selectAll: ContentEditableAction
-  deselectAll: ContentEditableAction
-  moveToStart: ContentEditableAction
-  moveToEnd: ContentEditableAction
-  focusElement: ContentEditableAction
-  blurElement: ContentEditableAction
-} {
+/**
+ * 提供 contenteditable 元素的操作封装
+ * @param targetRef - 需要操作的DOM元素引用
+ * @returns {
+ *   selectAll: 全选内容
+ *   deselectAll: 取消选择
+ *   moveToStart: 光标移到开头
+ *   moveToEnd: 光标移到结尾
+ *   focusElement: 聚焦元素
+ *   blurElement: 失焦元素
+ * }
+ *
+ * @example
+ * const { selectAll, moveToEnd } = useContentEditable(contentEditableRef)
+ * selectAll() // 全选可编辑区域内容
+ */
+export function useContentEditable(targetRef: Ref<HTMLElement | null>) {
   // 全选方法
   const selectAll: ContentEditableAction = () => {
     const element = targetRef.value
@@ -31,6 +40,11 @@ export function useContentEditable(targetRef: Ref<HTMLElement | null>): {
   }
 
   // 定位到最开头方法
+  /**
+   * 将光标定位到元素起始位置
+   * 适用于需要重置输入场景
+   * 注意：会清空当前选区
+   */
   const moveToStart: ContentEditableAction = () => {
     const element = targetRef.value
     if (element) {
