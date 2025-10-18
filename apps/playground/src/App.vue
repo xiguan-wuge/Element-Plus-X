@@ -14,6 +14,8 @@ import useSendDemo from './components/useSendDemo.vue'
 import useXStreamSIPDemo from './components/useXStreamSIPDemo.vue'
 import useXStreamSSEDemo from './components/useXStreamSSEDemo.vue'
 import WelcomeDemo from './components/WelcomeDemo.vue'
+import ChatDialogDemo from './components/ChatDialogDemo.vue'
+// import AISearchDemo from './components/AISearchDemo.vue'
 </script>
 
 <template>
@@ -88,6 +90,14 @@ import WelcomeDemo from './components/WelcomeDemo.vue'
       <el-tab-pane label="useXStream-SIP">
         <useXStreamSIPDemo />
       </el-tab-pane>
+
+      <el-tab-pane label="ChatDialog">
+        <ChatDialogDemo />
+      </el-tab-pane>
+      <!-- 在适当位置添加以下代码 -->
+      <!-- <el-tab-pane label="AISearch 组件" name="AISearchDemo">
+        <AISearchDemo />
+      </el-tab-pane> -->
     </el-tabs>
   </div>
 </template>

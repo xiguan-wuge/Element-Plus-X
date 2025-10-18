@@ -8,11 +8,14 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AISearch: typeof import('./src/components/AISearch/index.vue')['default']
+    AISearchDemo: typeof import('./src/components/AISearch/AISearchDemo.vue')['default']
     AppConfig: typeof import('./src/components/AppConfig/index.vue')['default']
     Attachments: typeof import('./src/components/Attachments/index.vue')['default']
     Audio: typeof import('./src/components/FilesCard/fileSvg/audio.vue')['default']
     Bubble: typeof import('./src/components/Bubble/index.vue')['default']
     BubbleList: typeof import('./src/components/BubbleList/index.vue')['default']
+    ChatDialog: typeof import('./src/components/ChatDialog/index.vue')['default']
     ClearButton: typeof import('./src/components/EditorSender/components/ClearButton/index.vue')['default']
     Code: typeof import('./src/components/FilesCard/fileSvg/code.vue')['default']
     Conversations: typeof import('./src/components/Conversations/index.vue')['default']
@@ -21,7 +24,6 @@ declare module 'vue' {
     EditorSender: typeof import('./src/components/EditorSender/index.vue')['default']
     ElAvatar: typeof import('element-plus/es')['ElAvatar']
     ElButton: typeof import('element-plus/es')['ElButton']
-    ElCard: typeof import('element-plus/es')['ElCard']
     ElCollapse: typeof import('element-plus/es')['ElCollapse']
     ElCollapseItem: typeof import('element-plus/es')['ElCollapseItem']
     ElDropdown: typeof import('element-plus/es')['ElDropdown']
