@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import type { AISearchProps, SearchResult } from './types'
-import { Delete, Loading, Search, Upload } from '@element-plus/icons-vue'
-import { ElButton, ElIcon, ElInput, ElUpload } from 'element-plus'
-import { computed, defineExpose, nextTick, ref, watch } from 'vue'
-import BubbleList from '../BubbleList/index.vue'
+import type { AISearchProps, SearchResult } from './types';
+import { Delete, Loading, Search, Upload } from '@element-plus/icons-vue';
+import { ElButton, ElIcon, ElInput, ElUpload } from 'element-plus';
+import { computed, nextTick, ref, watch } from 'vue';
+import BubbleList from '../BubbleList/index.vue';
 
 const props = withDefaults(defineProps<AISearchProps>(), {
   placeholder: '输入关键词搜索或上传文件...',
@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<AISearchProps>(), {
   autoFocus: false,
   debounceTime: 300,
   minSearchLength: 2,
-})
+});
 
 const emits = defineEmits([
   'search',
@@ -31,32 +31,32 @@ const emits = defineEmits([
   'fileUpload',
   'fileRemove',
   'update:results',
-])
+]);
 
 // 内部状态
-const inputValue = ref('')
-const isDropdownVisible = ref(false)
-const selectedFiles = ref<File[]>([])
-const inputRef = ref<HTMLElement | null>(null)
-const bubbleListRef = ref<any>(null)
-const debounceTimer = ref<number | null>(null)
+const inputValue = ref('');
+const isDropdownVisible = ref(false);
+const selectedFiles = ref<File[]>([]);
+const inputRef = ref<HTMLElement | null>(null);
+const bubbleListRef = ref<any>(null);
+const debounceTimer = ref<number | null>(null);
 
 // 计算属性
-const hasResults = computed(() => props.results && props.results.length > 0)
+const hasResults = computed(() => props.results && props.results.length > 0);
 const showDropdown = computed(() =>
   props.displayMode === 'dropdown'
   && isDropdownVisible.value
   && hasResults.value,
-)
+);
 const showFlatResults = computed(() =>
   props.displayMode === 'flat'
   && hasResults.value,
-)
+);
 const isSubmitDisabled = computed(() =>
   props.disabled
   || props.loading
   || (inputValue.value.trim().length < props.minSearchLength && selectedFiles.value.length === 0),
-)
+);
 
 // 将搜索结果转换为气泡列表项
 const bubbleListItems = computed(() => {
@@ -70,96 +70,96 @@ const bubbleListItems = computed(() => {
     isMarkdown: false,
     customProps: result.customProps,
     originalResult: result,
-  }))
-})
+  }));
+});
 
 // 监听输入值变化
 watch(inputValue, (newValue) => {
   if (debounceTimer.value) {
-    clearTimeout(debounceTimer.value)
+    clearTimeout(debounceTimer.value);
   }
 
   if (newValue.trim().length >= props.minSearchLength) {
     debounceTimer.value = setTimeout(() => {
-      handleSearch()
-    }, props.debounceTime) as unknown as number
+      handleSearch();
+    }, props.debounceTime) as unknown as number;
   }
   else if (newValue.trim().length === 0 && props.results.length > 0) {
     // 当输入框清空时，清空结果
-    handleClear()
+    handleClear();
   }
-})
+});
 
 // 处理搜索
 function handleSearch() {
   if (isSubmitDisabled.value)
-    return
+    return;
 
   emits('search', {
     query: inputValue.value,
     files: selectedFiles.value,
-  })
+  });
 
   // 显示下拉框
-  isDropdownVisible.value = true
+  isDropdownVisible.value = true;
 }
 
 // 处理清空
 function handleClear() {
-  inputValue.value = ''
-  selectedFiles.value = []
-  isDropdownVisible.value = false
-  emits('clear')
-  emits('update:results', [])
+  inputValue.value = '';
+  selectedFiles.value = [];
+  isDropdownVisible.value = false;
+  emits('clear');
+  emits('update:results', []);
 }
 
 // 处理文件上传
 function handleFileUpload(file: File) {
   // 检查文件大小
   if (file.size > props.maxFileSize) {
-    console.warn(`文件大小超过限制: ${file.name}`)
-    return false
+    console.warn(`文件大小超过限制: ${file.name}`);
+    return false;
   }
 
   // 检查文件数量
   if (selectedFiles.value.length >= props.maxFileCount) {
-    console.warn('文件数量超过限制')
-    return false
+    console.warn('文件数量超过限制');
+    return false;
   }
 
   // 添加文件
-  selectedFiles.value.push(file)
-  emits('fileUpload', file, selectedFiles.value)
+  selectedFiles.value.push(file);
+  emits('fileUpload', file, selectedFiles.value);
 
   // 如果有文件，自动触发搜索
   if (selectedFiles.value.length > 0) {
-    handleSearch()
+    handleSearch();
   }
 
-  return false // 阻止默认上传行为
+  return false; // 阻止默认上传行为
 }
 
 // 处理文件移除
 function handleFileRemove(file: File) {
-  const index = selectedFiles.value.indexOf(file)
+  const index = selectedFiles.value.indexOf(file);
   if (index !== -1) {
-    selectedFiles.value.splice(index, 1)
-    emits('fileRemove', file, selectedFiles.value)
+    selectedFiles.value.splice(index, 1);
+    emits('fileRemove', file, selectedFiles.value);
   }
 }
 
 // 处理结果点击
 function handleResultClick(item: any, index: number) {
-  emits('resultClick', item.originalResult, index)
+  emits('resultClick', item.originalResult, index);
 }
 
 // 处理点击外部关闭下拉框
 function handleClickOutside(event: MouseEvent) {
-  const target = event.target as HTMLElement
-  const searchContainer = document.querySelector('.el-ai-search')
+  const target = event.target as HTMLElement;
+  const searchContainer = document.querySelector('.el-ai-search');
 
   if (searchContainer && !searchContainer.contains(target)) {
-    isDropdownVisible.value = false
+    isDropdownVisible.value = false;
   }
 }
 
@@ -167,53 +167,53 @@ function handleClickOutside(event: MouseEvent) {
 function focus() {
   nextTick(() => {
     if (inputRef.value) {
-      inputRef.value.focus()
+      inputRef.value.focus();
     }
-  })
+  });
 }
 
 function clear() {
-  handleClear()
+  handleClear();
 }
 
 function setLoading(_loading: boolean) {
   // 注意：props是只读的，这里应该通过emit来更新loading状态
   // 如果需要动态控制loading，建议使用v-model:loading
-  console.warn('setLoading: props.loading is read-only, use v-model:loading instead')
+  console.warn('setLoading: props.loading is read-only, use v-model:loading instead');
 }
 
 function updateResults(results: SearchResult[]) {
-  emits('update:results', results)
+  emits('update:results', results);
 }
 
 function scrollToTop() {
   if (bubbleListRef.value) {
-    bubbleListRef.value.scrollToTop()
+    bubbleListRef.value.scrollToTop();
   }
 }
 
 function scrollToBottom() {
   if (bubbleListRef.value) {
-    bubbleListRef.value.scrollToBottom()
+    bubbleListRef.value.scrollToBottom();
   }
 }
 
 // 注册点击外部事件
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside)
+  document.addEventListener('click', handleClickOutside);
 
   if (props.autoFocus) {
-    focus()
+    focus();
   }
-})
+});
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside)
+  document.removeEventListener('click', handleClickOutside);
 
   if (debounceTimer.value) {
-    clearTimeout(debounceTimer.value)
+    clearTimeout(debounceTimer.value);
   }
-})
+});
 
 // defineExpose({
 //   focus,

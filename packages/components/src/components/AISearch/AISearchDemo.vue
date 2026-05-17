@@ -1,23 +1,23 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import AISearch from './index.vue'
-import type { SearchResult } from './types'
+import type { SearchResult } from './types';
+import { ref } from 'vue';
+import AISearch from './index.vue';
 
-const searchResults = ref<SearchResult[]>([])
-const loading = ref(false)
-const displayMode = ref<'dropdown' | 'flat'>('dropdown')
+const searchResults = ref<SearchResult[]>([]);
+const loading = ref(false);
+const displayMode = ref<'dropdown' | 'flat'>('dropdown');
 
 // 模拟搜索处理函数
-async function handleSearch(event: { query: string, files: File[] }) {
-  loading.value = true
-  
+async function handleSearch(event: { query: string; files: File[] }) {
+  loading.value = true;
+
   try {
     // 模拟API请求延迟
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    
+    await new Promise(resolve => setTimeout(resolve, 1000));
+
     // 生成模拟结果
-    const results: SearchResult[] = []
-    
+    const results: SearchResult[] = [];
+
     // 基于查询生成结果
     if (event.query) {
       for (let i = 1; i <= 5; i++) {
@@ -28,10 +28,10 @@ async function handleSearch(event: { query: string, files: File[] }) {
           source: '网络搜索',
           timestamp: new Date(),
           relevanceScore: 0.95 - (i * 0.05)
-        })
+        });
       }
     }
-    
+
     // 基于文件生成结果
     for (const file of event.files) {
       results.push({
@@ -44,17 +44,18 @@ async function handleSearch(event: { query: string, files: File[] }) {
         fileSize: file.size,
         filePath: file.name,
         relevanceScore: 0.98
-      })
+      });
     }
-    
-    searchResults.value = results
-  } finally {
-    loading.value = false
+
+    searchResults.value = results;
+  }
+  finally {
+    loading.value = false;
   }
 }
 
 function handleResultClick(result: SearchResult, index: number) {
-  console.log('点击了结果:', result, '索引:', index)
+  console.log('点击了结果:', result, '索引:', index);
   // 这里可以处理结果点击事件，例如导航到详情页或显示更多信息
 }
 
@@ -66,15 +67,19 @@ function handleResultClick(result: SearchResult, index: number) {
 <template>
   <div class="ai-search-demo">
     <h2>AI 检索组件示例</h2>
-    
+
     <div class="display-mode-toggle">
       <span>展示模式:</span>
       <el-radio-group v-model="displayMode">
-        <el-radio-button label="dropdown">下拉模式</el-radio-button>
-        <el-radio-button label="flat">平铺模式</el-radio-button>
+        <el-radio-button label="dropdown">
+          下拉模式
+        </el-radio-button>
+        <el-radio-button label="flat">
+          平铺模式
+        </el-radio-button>
       </el-radio-group>
     </div>
-    
+
     <div class="search-container">
       <AISearch
         v-model:results="searchResults"

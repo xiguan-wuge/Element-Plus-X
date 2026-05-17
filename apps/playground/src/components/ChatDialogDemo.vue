@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { ChatMessage } from 'vue-element-plus-x/types/ChatDialog'
+import type { ChatMessage } from 'vue-element-plus-x/types/ChatDialog';
 
-const chatDialogRef = ref()
+const chatDialogRef = ref();
 const messages = ref<ChatMessage[]>([
   {
     id: '1',
@@ -47,66 +47,66 @@ const messages = ref<ChatMessage[]>([
     timestamp: new Date(),
     isMarkdown: true,
   },
-])
+]);
 
-const loading = ref(false)
+const loading = ref(false);
 
 // 处理发送消息
-const handleSend = async (message: string) => {
-  console.log('发送消息:', message)
-  
+async function handleSend(message: string) {
+  console.log('发送消息:', message);
+
   // 模拟AI回复
-  loading.value = true
-  
+  loading.value = true;
+
   setTimeout(() => {
-    const aiResponse = `收到你的消息："${message}"。这是一个模拟的AI回复，在实际使用中，你可以连接到真实的AI服务。`
-    
+    const aiResponse = `收到你的消息："${message}"。这是一个模拟的AI回复，在实际使用中，你可以连接到真实的AI服务。`;
+
     chatDialogRef.value?.addAIResponse(aiResponse, {
       isMarkdown: true,
       isFog: true,
-    })
-    
-    loading.value = false
-  }, 2000)
+    });
+
+    loading.value = false;
+  }, 2000);
 }
 
 // 处理清空对话
-const handleClear = () => {
-  ElMessage.success('对话已清空')
+function handleClear() {
+  ElMessage.success('对话已清空');
 }
 
 // 处理复制消息
-const handleCopyMessage = (message: ChatMessage) => {
-  navigator.clipboard.writeText(message.content)
-  ElMessage.success('消息已复制到剪贴板')
+function handleCopyMessage(message: ChatMessage) {
+  navigator.clipboard.writeText(message.content);
+  ElMessage.success('消息已复制到剪贴板');
 }
 
 // 处理删除消息
-const handleDeleteMessage = (message: ChatMessage) => {
-  const newMessages = messages.value.filter(msg => msg.id !== message.id)
-  messages.value = newMessages
-  ElMessage.success('消息已删除')
+function handleDeleteMessage(message: ChatMessage) {
+  const newMessages = messages.value.filter(msg => msg.id !== message.id);
+  messages.value = newMessages;
+  ElMessage.success('消息已删除');
 }
 
 // 处理消息完成
-const handleMessageComplete = (instance: any, index: number) => {
-  console.log('消息打字完成:', index)
+function handleMessageComplete(instance: any, index: number) {
+  console.log('消息打字完成:', index);
 }
 
 // 添加测试消息
-const addTestMessage = () => {
+function addTestMessage() {
   const testMessage: ChatMessage = {
     id: Date.now().toString(),
     role: 'user',
     content: '这是一条测试消息',
     timestamp: new Date(),
-  }
-  messages.value.push(testMessage)
+  };
+  messages.value.push(testMessage);
 }
 
 // 模拟流式回复
-const simulateStreamResponse = () => {
-  const messageId = Date.now().toString()
+function simulateStreamResponse() {
+  const messageId = Date.now().toString();
   const aiMessage: ChatMessage = {
     id: messageId,
     role: 'ai',
@@ -114,21 +114,22 @@ const simulateStreamResponse = () => {
     timestamp: new Date(),
     loading: true,
     isMarkdown: true,
-  }
-  
-  messages.value.push(aiMessage)
-  
-  let content = ''
-  const fullContent = '这是一个模拟的流式回复，文字会逐步显示出来...'
+  };
+
+  messages.value.push(aiMessage);
+
+  let content = '';
+  const fullContent = '这是一个模拟的流式回复，文字会逐步显示出来...';
   const interval = setInterval(() => {
     if (content.length < fullContent.length) {
-      content += fullContent[content.length]
-      chatDialogRef.value?.updateMessage(messageId, content)
-    } else {
-      chatDialogRef.value?.setMessageLoading(messageId, false)
-      clearInterval(interval)
+      content += fullContent[content.length];
+      chatDialogRef.value?.updateMessage(messageId, content);
     }
-  }, 100)
+    else {
+      chatDialogRef.value?.setMessageLoading(messageId, false);
+      clearInterval(interval);
+    }
+  }, 100);
 }
 </script>
 
@@ -159,11 +160,11 @@ const simulateStreamResponse = () => {
         ref="chatDialogRef"
         v-model:messages="messages"
         :loading="loading"
-        :max-height="'400px'"
-        :placeholder="'请输入你的问题...'"
+        max-height="400px"
+        placeholder="请输入你的问题..."
         :show-avatar="true"
-        :user-avatar="'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
-        :ai-avatar="'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png'"
+        user-avatar="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
+        ai-avatar="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"
         :typing-speed="30"
         :show-typing-effect="true"
         @send="handleSend"
@@ -213,12 +214,12 @@ const simulateStreamResponse = () => {
 
 .header-wrap {
   text-align: center;
-  
+
   h3 {
     margin: 0 0 8px 0;
     color: var(--el-color-primary);
   }
-  
+
   p {
     margin: 0;
     color: var(--el-text-color-secondary);
@@ -250,12 +251,12 @@ const simulateStreamResponse = () => {
     padding: 2px 6px;
     border-radius: 4px;
     font-weight: 500;
-    
+
     &.user {
       background-color: var(--el-color-primary-light-9);
       color: var(--el-color-primary);
     }
-    
+
     &.ai {
       background-color: var(--el-color-success-light-9);
       color: var(--el-color-success);
@@ -270,4 +271,4 @@ const simulateStreamResponse = () => {
 .input-header {
   margin-bottom: 8px;
 }
-</style> 
+</style>

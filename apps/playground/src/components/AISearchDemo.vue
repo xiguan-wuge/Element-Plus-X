@@ -1,35 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { AISearch } from 'vue-element-plus-x'
+import { ref } from 'vue';
+import { AISearch } from 'vue-element-plus-x';
 
 // 定义SearchResult类型
 interface SearchResult {
-  id: string
-  title: string
-  content: string
-  source?: string
-  timestamp?: Date
-  fileType?: string
-  fileSize?: number
-  filePath?: string
-  relevanceScore?: number
-  customProps?: Record<string, any>
+  id: string;
+  title: string;
+  content: string;
+  source?: string;
+  timestamp?: Date;
+  fileType?: string;
+  fileSize?: number;
+  filePath?: string;
+  relevanceScore?: number;
+  customProps?: Record<string, any>;
 }
 
-const searchResults = ref<SearchResult[]>([])
-const loading = ref(false)
-const displayMode = ref<'dropdown' | 'flat'>('dropdown')
+const searchResults = ref<SearchResult[]>([]);
+const loading = ref(false);
+const displayMode = ref<'dropdown' | 'flat'>('dropdown');
 
 // 模拟搜索处理函数
-async function handleSearch(event: { query: string, files: File[] }) {
-  loading.value = true
+async function handleSearch(event: { query: string; files: File[] }) {
+  loading.value = true;
 
   try {
     // 模拟API请求延迟
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
     // 生成模拟结果
-    const results: SearchResult[] = []
+    const results: SearchResult[] = [];
 
     // 基于查询生成结果
     if (event.query) {
@@ -41,7 +41,7 @@ async function handleSearch(event: { query: string, files: File[] }) {
           source: '网络搜索',
           timestamp: new Date(),
           relevanceScore: 0.95 - (i * 0.05),
-        })
+        });
       }
     }
 
@@ -57,18 +57,18 @@ async function handleSearch(event: { query: string, files: File[] }) {
         fileSize: file.size,
         filePath: file.name,
         relevanceScore: 0.98,
-      })
+      });
     }
 
-    searchResults.value = results
+    searchResults.value = results;
   }
   finally {
-    loading.value = false
+    loading.value = false;
   }
 }
 
 function handleResultClick(result: SearchResult, index: number) {
-  console.log('点击了结果:', result, '索引:', index)
+  console.log('点击了结果:', result, '索引:', index);
   // 这里可以处理结果点击事件，例如导航到详情页或显示更多信息
 }
 

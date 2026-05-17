@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import type { BubbleListItemProps } from '../BubbleList/types'
-import type { ChatDialogProps, ChatMessage } from './types'
-import BubbleList from '../BubbleList/index.vue'
-import Sender from '../Sender/index.vue'
+import type { BubbleListItemProps } from '../BubbleList/types';
+import type { ChatDialogProps, ChatMessage } from './types';
+import BubbleList from '../BubbleList/index.vue';
+import Sender from '../Sender/index.vue';
 
 const props = withDefaults(defineProps<ChatDialogProps>(), {
   messages: () => [],
@@ -21,34 +21,38 @@ const props = withDefaults(defineProps<ChatDialogProps>(), {
   bubbleMaxWidth: '80%',
   typingSpeed: 50,
   showTypingEffect: true,
-})
+});
 
 const emits = defineEmits<{
-  'send': [message: string]
-  'clear': []
-  'update:messages': [messages: ChatMessage[]]
-  'messageComplete': [instance: any, index: number]
-  'copyMessage': [message: ChatMessage]
-  'deleteMessage': [message: ChatMessage]
-}>()
+  'send': [message: string];
+  'clear': [];
+  'update:messages': [messages: ChatMessage[]];
+  'messageComplete': [instance: any, index: number];
+  'copyMessage': [message: ChatMessage];
+  'deleteMessage': [message: ChatMessage];
+}>();
 
-const bubbleListRef = ref()
-const senderRef = ref()
-const inputValue = ref('')
+const bubbleListRef = ref();
+const senderRef = ref();
+const inputValue = ref('');
 
 // 转换消息格式为BubbleList格式
 const bubbleList = computed(() => {
   return props.messages.map((message, index) => {
-    const isUser = message.role === 'user'
+    const isUser = message.role === 'user';
     const bubbleItem = {
       key: index,
       content: message.content,
       placement: isUser ? 'end' : 'start',
       loading: message.loading || false,
-      typing: isUser ? false : (props.showTypingEffect ? {
-        step: props.typingSpeed,
-        suffix: '...'
-      } : false),
+      typing: isUser
+        ? false
+        : (props.showTypingEffect
+            ? {
+                step: props.typingSpeed,
+                suffix: '...'
+              }
+            : false),
       isMarkdown: message.isMarkdown || false,
       isFog: message.isFog || false,
       avatar: isUser ? props.userAvatar : props.aiAvatar,
@@ -58,44 +62,45 @@ const bubbleList = computed(() => {
       timestamp: message.timestamp,
       id: message.id,
       ...message.customProps
-    }
-    return bubbleItem as BubbleListItemProps & ChatMessage
-  })
-})
+    };
+    return bubbleItem as BubbleListItemProps & ChatMessage;
+  });
+});
 
 // 发送消息
-const handleSend = (value: string) => {
-  if (!value.trim()) return
-  
+function handleSend(value: string) {
+  if (!value.trim())
+    return;
+
   const userMessage: ChatMessage = {
     id: Date.now().toString(),
     role: 'user',
     content: value.trim(),
     timestamp: new Date(),
-  }
-  
-  const newMessages = [...props.messages, userMessage]
-  emits('update:messages', newMessages)
-  emits('send', value.trim())
-  
-  inputValue.value = ''
-  
+  };
+
+  const newMessages = [...props.messages, userMessage];
+  emits('update:messages', newMessages);
+  emits('send', value.trim());
+
+  inputValue.value = '';
+
   // 自动滚动到底部
   if (props.autoScroll) {
     nextTick(() => {
-      bubbleListRef.value?.scrollToBottom()
-    })
+      bubbleListRef.value?.scrollToBottom();
+    });
   }
 }
 
 // 清空消息
-const handleClear = () => {
-  emits('clear')
-  emits('update:messages', [])
+function handleClear() {
+  emits('clear');
+  emits('update:messages', []);
 }
 
 // 添加AI回复
-const addAIResponse = (content: string, options?: Partial<ChatMessage>) => {
+function addAIResponse(content: string, options?: Partial<ChatMessage>) {
   const aiMessage: ChatMessage = {
     id: Date.now().toString(),
     role: 'ai',
@@ -103,33 +108,33 @@ const addAIResponse = (content: string, options?: Partial<ChatMessage>) => {
     timestamp: new Date(),
     isMarkdown: true,
     ...options
-  }
-  
-  const newMessages = [...props.messages, aiMessage]
-  emits('update:messages', newMessages)
-  
+  };
+
+  const newMessages = [...props.messages, aiMessage];
+  emits('update:messages', newMessages);
+
   // 自动滚动到底部
   if (props.autoScroll) {
     nextTick(() => {
-      bubbleListRef.value?.scrollToBottom()
-    })
+      bubbleListRef.value?.scrollToBottom();
+    });
   }
 }
 
 // 设置消息加载状态
-const setMessageLoading = (messageId: string, loading: boolean) => {
-  const newMessages = props.messages.map(msg => 
+function setMessageLoading(messageId: string, loading: boolean) {
+  const newMessages = props.messages.map(msg =>
     msg.id === messageId ? { ...msg, loading } : msg
-  )
-  emits('update:messages', newMessages)
+  );
+  emits('update:messages', newMessages);
 }
 
 // 更新消息内容
-const updateMessage = (messageId: string, content: string) => {
-  const newMessages = props.messages.map(msg => 
+function updateMessage(messageId: string, content: string) {
+  const newMessages = props.messages.map(msg =>
     msg.id === messageId ? { ...msg, content } : msg
-  )
-  emits('update:messages', newMessages)
+  );
+  emits('update:messages', newMessages);
 }
 
 // 暴露方法给父组件
@@ -142,7 +147,7 @@ defineExpose({
   scrollToMessage: (index: number) => bubbleListRef.value?.scrollToBubble(index),
   clear: handleClear,
   focus: () => senderRef.value?.focus(),
-})
+});
 </script>
 
 <template>
@@ -157,9 +162,9 @@ defineExpose({
         @complete="(instance, index) => emits('messageComplete', instance, index)"
       >
         <template #avatar="{ item }">
-          <el-avatar 
+          <el-avatar
             v-if="showAvatar"
-            :size="item.avatarSize" 
+            :size="item.avatarSize"
             :src="item.avatar"
             :shape="item.avatarShape || 'circle'"
           />
@@ -187,16 +192,16 @@ defineExpose({
         <template #footer="{ item }">
           <slot name="message-footer" :item="item">
             <div class="message-footer">
-              <el-button 
+              <el-button
                 v-if="item.role === 'ai'"
-                type="text" 
+                type="text"
                 size="small"
                 @click="emits('copyMessage', item)"
               >
                 复制
               </el-button>
-              <el-button 
-                type="text" 
+              <el-button
+                type="text"
                 size="small"
                 @click="emits('deleteMessage', item)"
               >
@@ -209,7 +214,9 @@ defineExpose({
         <template #loading="{ item }">
           <slot name="message-loading" :item="item">
             <div class="message-loading">
-              <el-icon class="is-loading"><Loading /></el-icon>
+              <el-icon class="is-loading">
+                <Loading />
+              </el-icon>
               <span>AI正在思考中...</span>
             </div>
           </slot>
@@ -227,7 +234,7 @@ defineExpose({
         :disabled="disabled"
         :clearable="clearable"
         :allow-speech="allowSpeech"
-        :submit-type="'enter'"
+        submit-type="enter"
         :auto-size="{ minRows: 1, maxRows: 4 }"
         @submit="handleSend"
         @clear="handleClear"
@@ -243,9 +250,9 @@ defineExpose({
         <template #action-list>
           <slot name="input-actions">
             <div class="input-actions">
-              <el-button 
+              <el-button
                 v-if="messages.length > 0"
-                type="text" 
+                type="text"
                 size="small"
                 @click="handleClear"
               >
@@ -334,4 +341,4 @@ defineExpose({
   align-items: center;
   gap: 8px;
 }
-</style> 
+</style>
