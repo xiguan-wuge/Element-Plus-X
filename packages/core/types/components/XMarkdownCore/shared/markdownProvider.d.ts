@@ -1,4 +1,0 @@
-declare const MARKDOWN_PROVIDER_KEY: unique symbol;
-declare const GLOBAL_SHIKI_KEY: unique symbol;
-declare const MERMAID_CACHE_KEY_LENGTH = 10000;
-export { GLOBAL_SHIKI_KEY, MARKDOWN_PROVIDER_KEY, MERMAID_CACHE_KEY_LENGTH };

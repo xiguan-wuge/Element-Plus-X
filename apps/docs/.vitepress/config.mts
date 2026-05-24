@@ -91,7 +91,6 @@ export default defineConfig({
   },
   vite: {
     resolve: {
-      conditions: ['node', 'default'],
       alias: [
         {
           find: /^decode-named-character-reference$/,
@@ -122,11 +121,7 @@ export default defineConfig({
       groupIconVitePlugin() as Plugin,
       Unocss() as unknown as Plugin,
     ],
-    optimizeDeps: {
-      esbuildOptions: {
-        conditions: ['node', 'default'],
-      },
-    },
+    optimizeDeps: {},
     ssr: {
       noExternal: ['element-plus', 'gsap', 'decode-named-character-reference'],
       resolve: {

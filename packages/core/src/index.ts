@@ -121,10 +121,10 @@ export type {
 } from './components/XSender/types.d.ts';
 
 export * from './hooks';
-export * from './locale';
 export interface ElementPlusXInstallOptions {
   locale?: import('./locale/types').Language;
 }
+export * from './locale';
 
 const ElementPlusX: Plugin = {
   install(app: App, options: ElementPlusXInstallOptions = {}) {
