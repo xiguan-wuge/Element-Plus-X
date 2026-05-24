@@ -30,24 +30,21 @@ const pingEnd = ref(false);
 const TOLERANCE = 1;
 function checkPing() {
   const containerEle = containerRef.value;
-  if (!containerEle)
-    return;
+  if (!containerEle) return;
 
   if (props.overflow === 'scrollX') {
     pingStart.value = Math.abs(containerEle.scrollLeft) >= TOLERANCE;
     pingEnd.value =
       containerEle.scrollWidth -
-      containerEle.clientWidth -
-      Math.abs(containerEle.scrollLeft) >=
+        containerEle.clientWidth -
+        Math.abs(containerEle.scrollLeft) >=
       TOLERANCE;
-  }
-  else if (props.overflow === 'scrollY') {
+  } else if (props.overflow === 'scrollY') {
     pingStart.value = containerEle.scrollTop !== 0;
     pingEnd.value =
       containerEle.scrollHeight - containerEle.clientHeight !==
       containerEle.scrollTop;
-  }
-  else {
+  } else {
     pingStart.value = false;
     pingEnd.value = false;
   }
@@ -106,13 +103,11 @@ function toggleDragStyle(isDrag: boolean) {
         dropAreaRef.value.style.height = '100vh'; // 视口高度
         dropAreaRef.value.style.left = '0';
         dropAreaRef.value.style.top = '0';
-      }
-      else {
+      } else {
         // 其他元素保持原逻辑
         targetElement.value.style.position = 'relative';
       }
-    }
-    else {
+    } else {
       targetElement.value.style.position = '';
     }
   }
@@ -132,8 +127,7 @@ function handleUploadError(error: any, file: File, props: FileListProps) {
 }
 
 function getTargetElement() {
-  if (!props.dragTarget)
-    return wrapperRef.value;
+  if (!props.dragTarget) return wrapperRef.value;
   // 新增：处理原生 DOM 元素（如 document.body）
   if (props.dragTarget instanceof HTMLElement) {
     return props.dragTarget;
@@ -169,7 +163,7 @@ function targetDrop(event: DragEvent) {
   if (event.dataTransfer) {
     const files = event.dataTransfer.files;
     if (files.length) {
-      emits('uploadDrop', [...files], { ...props });
+      emits('uploadDrop', Array.from(files), { ...props });
     }
   }
 }
@@ -422,9 +416,7 @@ defineExpose({
           <el-icon class="elx-attachments-drop-area-icon">
             <UploadFilled />
           </el-icon>
-          <div class="elx-attachments-drop-area-text">
-            在此处拖放文件上传
-          </div>
+          <div class="elx-attachments-drop-area-text">在此处拖放文件上传</div>
         </div>
       </slot>
     </teleport>

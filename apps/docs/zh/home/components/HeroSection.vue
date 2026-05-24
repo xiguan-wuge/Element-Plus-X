@@ -19,8 +19,7 @@ const previewText = '组件预览';
 const githubText = 'GitHub';
 
 onMounted(async () => {
-  if (typeof window === 'undefined')
-    return;
+  if (typeof window === 'undefined') return;
   if (!SplitText) {
     const mod = await import('gsap/SplitText');
     SplitText = mod.SplitText;
@@ -29,10 +28,8 @@ onMounted(async () => {
     const mod = await import('gsap/ScrollTrigger');
     ScrollTrigger = mod.default ?? mod.ScrollTrigger;
   }
-  if (SplitText)
-    gsap.registerPlugin(SplitText);
-  if (ScrollTrigger)
-    gsap.registerPlugin(ScrollTrigger);
+  if (SplitText) gsap.registerPlugin(SplitText);
+  if (ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
   await document.fonts?.ready;
   textAnimation();
   scrollTriggerAnimation();
@@ -95,8 +92,7 @@ async function copyInstallCommand() {
     await navigator.clipboard.writeText(installCommand);
     copied.value = true;
     setTimeout(() => (copied.value = false), 2000);
-  }
-  catch (err) {
+  } catch (err) {
     console.error('复制失败:', err);
   }
 }
@@ -173,7 +169,7 @@ function handleGithub() {
             src="https://github.githubassets.com/assets/apple-touch-icon-144x144-b882e354c005.png"
             class="w-6 h-6 rounded-full"
             alt=""
-          >
+          />
           <span>{{ githubText }}</span>
         </button>
       </div>
@@ -184,10 +180,12 @@ function handleGithub() {
       >
         <span
           class="text-indigo-400 font-mono font-semibold px-2 text-sm md:text-base select-none"
-        >$</span>
+          >$</span
+        >
         <span
           class="flex-1 text-white/90 font-mono md:text-base text-left px-2"
-        >{{ installCommand }}</span>
+          >{{ installCommand }}</span
+        >
         <button
           class="bg-indigo-500/20 hover:bg-indigo-500/30 border border-indigo-500/30 hover:border-indigo-500/50 rounded-xl p-3 text-white/80 hover:text-white transition-all duration-300 hover:scale-105 mr-auto"
           @click="copyInstallCommand"
@@ -227,7 +225,7 @@ function handleGithub() {
         <img
           src="https://element-plus-x.com/logo.png"
           class="w-[256px] h-[256px] relative z-10"
-        >
+        />
       </div>
     </div>
   </section>
@@ -237,7 +235,13 @@ function handleGithub() {
 :deep(.title-line) {
   will-change: transform;
   background: linear-gradient(
-135deg, #98ff53 0%, #ff1381 25%, #f65c5c 50%, #ff1381 75%, #f5ff69 100%;
+    135deg,
+    #98ff53 0%,
+    #ff1381 25%,
+    #f65c5c 50%,
+    #ff1381 75%,
+    #f5ff69 100%
+  );
   background-size: 300% 300%;
   background-clip: text;
   -webkit-background-clip: text;
@@ -467,7 +471,10 @@ function handleGithub() {
   height: 100%;
   border-radius: 50%;
   background: radial-gradient(
-circle, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0) 70%;
+    circle,
+    rgba(99, 102, 241, 0.5) 0%,
+    rgba(139, 92, 246, 0) 70%
+  );
   z-index: 0;
   animation: glowPulse 3s ease-in-out infinite;
 }
@@ -479,7 +486,10 @@ circle, rgba(99, 102, 241, 0.5) 0%, rgba(139, 92, 246, 0) 70%;
   height: 120%;
   border-radius: 50%;
   background: radial-gradient(
-circle, rgba(139, 92, 246, 0.6) 0%, rgba(99, 102, 241, 0) 70%;
+    circle,
+    rgba(139, 92, 246, 0.6) 0%,
+    rgba(99, 102, 241, 0) 70%
+  );
   z-index: -1;
   animation: glowFlow 4s ease-in-out infinite;
 }

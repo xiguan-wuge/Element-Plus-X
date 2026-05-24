@@ -95,8 +95,7 @@ const circleManager = ref<TechCircleManager | null>(null);
 /** 处理鼠标移动事件 */
 function handleMouseMove(e: MouseEvent, index: number) {
   const card = (e.currentTarget as HTMLElement).closest('.component-card');
-  if (!(card instanceof HTMLElement))
-    return;
+  if (!(card instanceof HTMLElement)) return;
 
   const rect = card.getBoundingClientRect();
   const { xRotation, yRotation } = calculateCardRotation(
@@ -112,8 +111,7 @@ function handleMouseMove(e: MouseEvent, index: number) {
 /** 处理鼠标离开事件 */
 function handleMouseLeave(index: number) {
   const targetElement = cardWrapRef.value?.children[index] as HTMLElement;
-  if (!targetElement)
-    return;
+  if (!targetElement) return;
   cardTweens.value[index]?.kill();
   cardTweens.value[index] = resetRotationTween(targetElement);
 }
@@ -122,13 +120,11 @@ function handleMouseLeave(index: number) {
 async function initStarfields() {
   await nextTick();
   canvases.value.forEach((canvas, index) => {
-    if (!canvas)
-      return;
+    if (!canvas) return;
 
     const manager = new StarfieldManager(canvas, (stars, meteors) => {
       const ctx = canvas.getContext('2d');
-      if (!ctx)
-        return;
+      if (!ctx) return;
 
       ctx.clearRect(0, 0, canvas.clientWidth, canvas.clientHeight);
 
@@ -177,8 +173,7 @@ async function initStarfields() {
 /** 初始化卡片动画 - 与滚动条关联的六方向汇聚 */
 async function initCardAnimations() {
   await nextTick();
-  if (!cardWrapRef.value)
-    return;
+  if (!cardWrapRef.value) return;
 
   // 使用gsap.utils.toArray处理卡片元素
   const cards = gsap.utils.toArray<HTMLElement>(
@@ -255,14 +250,12 @@ function initBackgroundCircles() {
 
 // 生命周期
 onMounted(async () => {
-  if (typeof window === 'undefined')
-    return;
+  if (typeof window === 'undefined') return;
   if (!ScrollTrigger) {
     const mod = await import('gsap/ScrollTrigger');
     ScrollTrigger = mod.default ?? mod.ScrollTrigger;
   }
-  if (ScrollTrigger)
-    gsap.registerPlugin(ScrollTrigger);
+  if (ScrollTrigger) gsap.registerPlugin(ScrollTrigger);
   initBackgroundCircles();
   setTimeout(() => {
     initCardAnimations();
@@ -292,9 +285,7 @@ onUnmounted(() => {
   />
 
   <div class="flex flex-col gap-0px">
-    <h2 class="reviews-title max-w-[1200px] mx-auto z-10000">
-      组件展示
-    </h2>
+    <h2 class="reviews-title max-w-[1200px] mx-auto z-10000">组件展示</h2>
 
     <div ref="cardWrapRef" class="component-card-wrap">
       <Card
@@ -411,7 +402,13 @@ onUnmounted(() => {
 /* 标题渐变动画 */
 .reviews-title {
   background: linear-gradient(
-135deg, #ffffff 0%, #e2e8f0 25%, #6366f1 50%, #8b5cf6 75%, #ffffff 100%;
+    135deg,
+    #ffffff 0%,
+    #e2e8f0 25%,
+    #6366f1 50%,
+    #8b5cf6 75%,
+    #ffffff 100%
+  );
   background-size: 200% 200%;
   background-clip: text;
   -webkit-background-clip: text;

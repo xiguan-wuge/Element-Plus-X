@@ -13,30 +13,33 @@ title: 支持 开启/关闭 打字模式
 </docs>
 
 <script setup lang="ts">
+import { demoAll } from './demo-all';
+
 onMounted(() => {
   setContents('text');
-  setContents('markdown');
+  // setContents('markdown');
 });
 
 const isTyping = ref(true);
 const content = ref('');
 const content1 = ref('');
-const markdownText = ref('');
-
+const markdownText = ref(
+  ` ### 🐒 is-markdown 和 typing 结合使用 \n 这是一个 Markdown 示例。\n - 列表项 1 \n - 列表项 2 **粗体文本** 和 *斜体文本* \n \`\`\`javascript \n console.log('Hello, world!'); \n \`\`\` `
+);
 function setContents(type: string) {
   if (type === 'text') {
     content.value = '';
     content1.value = '';
     setTimeout(() => {
-      content.value = 'typing 属性开启打字效果';
-      content1.value =
-        'typing 属性也可以是对象，来控制打每次打字吐字、每次打字间隔、和打字器后缀';
+      // content.value = 'typing 属性开启打字效果';
+      content1.value = demoAll;
+      // 'typing 属性也可以是对象，来控制打每次打字吐字、每次打字间隔、和打字器后缀';
     }, 800);
-  }
-  else if (type === 'markdown') {
+  } else if (type === 'markdown') {
     markdownText.value = '';
     setTimeout(() => {
-      markdownText.value = ` ### 🐒 is-markdown 和 typing 结合使用 \n 这是一个 Markdown 示例。\n - 列表项 1 \n - 列表项 2 **粗体文本** 和 *斜体文本* \n \`\`\`javascript \n console.log('Hello, world!'); \n \`\`\` `;
+      // markdownText.value = ` ### 🐒 is-markdown 和 typing 结合使用 \n 这是一个 Markdown 示例。\n - 列表项 1 \n - 列表项 2 **粗体文本** 和 *斜体文本* \n \`\`\`javascript \n console.log('Hello, world!'); \n \`\`\` `;
+      markdownText.value = demoAll;
     }, 800);
   }
 }
@@ -58,11 +61,11 @@ function setContents(type: string) {
         </el-button>
       </div>
       <div style="display: flex; gap: 8px; flex-direction: column">
-        <Typewriter :content="content" :typing="isTyping" />
-        <Typewriter
+        <!-- <Typewriter :content="content" :typing="isTyping" /> -->
+        <!-- <Typewriter
           :content="content1"
           :typing="{ step: 2, interval: 100, suffix: '💩' }"
-        />
+        /> -->
         <Typewriter
           :content="markdownText"
           :typing="isTyping"

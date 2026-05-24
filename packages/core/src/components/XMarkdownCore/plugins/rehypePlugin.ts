@@ -26,7 +26,6 @@ export function rehypeAnimatedPlugin() {
         const newChildren: Array<ElementContent> = [];
         for (const child of node.children) {
           if (child.type === 'text') {
-            // @ts-expect-error Segmenter is not available in all environments
             const segmenter = new Intl.Segmenter('zh', { granularity: 'word' });
             const segments = segmenter.segment(child.value);
             const words = [...segments]
@@ -42,8 +41,7 @@ export function rehypeAnimatedPlugin() {
                 type: 'element'
               });
             });
-          }
-          else {
+          } else {
             newChildren.push(child);
           }
         }

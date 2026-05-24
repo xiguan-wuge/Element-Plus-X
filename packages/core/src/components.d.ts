@@ -50,6 +50,7 @@ declare module 'vue' {
     FilesCard: typeof import('./components/FilesCard/index.vue')['default']
     HighLightCode: typeof import('./components/XMarkdownCore/components/HighLightCode/index.vue')['default']
     Image: typeof import('./components/FilesCard/fileSvg/image.vue')['default']
+    Index2: typeof import('./components/Typewriter/index2.vue')['default']
     IndexAttachments: typeof import('./components/Attachments/index-attachments.vue')['default']
     IndexFileList: typeof import('./components/Attachments/index-file-list.vue')['default']
     Item: typeof import('./components/Conversations/components/item.vue')['default']

@@ -26,23 +26,23 @@ title: 'Typewriter'
 
 ### 基本使用
 
-<demo src="./demos/content.vue"></demo>
+<!-- <demo src="./demos/content.vue"></demo> -->
 
 ### Markdown 渲染
 
-<demo src="./demos/isMarkdown.vue"></demo>
+<!-- <demo src="./demos/isMarkdown.vue"></demo> -->
 
 ### MD-代码块高亮（v1.2.0 新增）
 
 提供一个内置的样式
 
-<demo src="./demos/newMarkDown.vue"></demo>
+<!-- <demo src="./demos/newMarkDown.vue"></demo> -->
 
 ### MD-插件模式（v1.2.0 新增）
 
 如果你觉得内置的样式不好看或者内置的插件不能满足你的需求，可以通过插件模式自定定义 **样式** 和 **插件**。
 
-<demo src="./demos/mermaid.vue"></demo>
+<!-- <demo src="./demos/mermaid.vue"></demo> -->
 
 ### 开启打字效果
 
@@ -50,15 +50,15 @@ title: 'Typewriter'
 
 ### 打字器雾化效果
 
-<demo src="./demos/isFog.vue"></demo>
+<!-- <demo src="./demos/isFog.vue"></demo> -->
 
 ### 动态更新内容
 
-<demo src="./demos/updates.vue"></demo>
+<!-- <demo src="./demos/updates.vue"></demo> -->
 
 ### 控制打字
 
-<demo src="./demos/customized.vue"></demo>
+<!-- <demo src="./demos/customized.vue"></demo> -->
 
 ## 属性
 
