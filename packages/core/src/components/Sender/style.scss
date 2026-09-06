@@ -160,3 +160,246 @@
   max-width: calc(100% - 54px) !important;
   margin-left: var(--el-sender-trigger-popover-left) !important;
 }
+
+/* ===================== 词槽模式（Slot Mode）===================== */
+.el-sender {
+  .el-sender-content {
+    /* contenteditable 编辑器外壳
+       注意：SlotTextArea 为多根组件（fragment），根元素不会继承本组件 scope id，
+       必须使用 :deep() 穿透，否则以下样式全部失效 */
+    :deep(.el-sender-input-slot) {
+      outline: none;
+      cursor: text;
+      white-space: pre-wrap;
+      width: 100%;
+      caret-color: var(--el-color-primary);
+      font-size: var(--el-sender-input-input-font-size, 14px);
+      line-height: var(--el-font-line-height-primary, 22px);
+      overflow-y: auto;
+      word-break: break-word;
+
+      &:empty::before {
+        content: attr(data-placeholder);
+        color: var(--el-text-color-placeholder);
+        pointer-events: none;
+      }
+
+      &.el-sender-input-slot-disabled {
+        cursor: not-allowed;
+        color: var(--el-text-color-placeholder);
+      }
+    }
+
+    /* 词槽宿主（非 content 类型：芯片样式） */
+    :deep(.el-sender-slot:not(.el-sender-slot-content)) {
+      display: inline-block;
+      vertical-align: middle;
+      margin-block: 1px;
+      height: 24px;
+      word-break: break-all;
+      white-space: nowrap;
+      margin-inline: 2px;
+      /* 词槽内嵌组件（如 el-switch 的 label）为绝对定位时以此宿主为基准 */
+      position: relative;
+    }
+
+    /* content 类型：可编辑词槽 */
+    :deep(.el-sender-slot-content) {
+      height: 24px;
+      caret-color: var(--el-color-primary);
+      background: var(--el-fill-color-light);
+      outline: none;
+      color: var(--el-text-color-regular);
+      border-radius: var(--el-border-radius-base);
+      padding-inline: 2px;
+      box-sizing: border-box;
+      vertical-align: middle;
+      font-size: inherit;
+      margin-block: 1px;
+      line-height: 22px;
+      display: inline-block;
+      position: relative;
+      cursor: text;
+
+      &:empty {
+        width: fit-content;
+
+        &::after {
+          display: inline-block;
+          height: inherit;
+          content: attr(data-placeholder);
+          color: var(--el-text-color-placeholder);
+        }
+      }
+    }
+
+    /* content 词槽前后占位（保证空格边界） */
+    :deep(.el-sender-slot-no-width) {
+      user-select: none;
+      width: 3px;
+      display: inline-block;
+      line-height: inherit;
+    }
+
+    /* 内嵌输入框词槽 */
+    :deep(.el-sender-slot-input) {
+      height: 100%;
+      background: var(--el-fill-color-light);
+      border-radius: var(--el-border-radius-base);
+      color: var(--el-text-color-regular);
+      width: 140px;
+
+      .el-input__wrapper {
+        background: transparent;
+        padding-inline: 4px;
+        /* 非聚焦态隐藏默认阴影以融入词槽视觉，聚焦时保留主色描边作为可编辑反馈 */
+        box-shadow: none !important;
+
+        &.is-focus {
+          box-shadow: 0 0 0 1px var(--el-color-primary) inset !important;
+        }
+      }
+
+      .el-input__inner {
+        font-size: inherit;
+        line-height: inherit;
+        height: 22px;
+      }
+    }
+
+    /* 内嵌下拉选择词槽 */
+    :deep(.el-sender-slot-select) {
+      font-size: inherit;
+      line-height: 22px;
+      padding-inline: 4px;
+      transition: border-color var(--el-transition-duration);
+      position: relative;
+      display: inline-flex;
+      align-items: center;
+      height: 100%;
+      box-sizing: border-box;
+      cursor: pointer;
+      background: var(--el-fill-color-light);
+      border-radius: var(--el-border-radius-base);
+      color: var(--el-text-color-regular);
+      border: 1px solid var(--el-border-color);
+
+      &:hover,
+      &.el-sender-slot-select-open {
+        border-color: var(--el-color-primary);
+      }
+    }
+
+    :deep(.el-sender-slot-select-placeholder) {
+      color: var(--el-text-color-placeholder);
+    }
+
+    :deep(.el-sender-slot-select-value) {
+      flex: 1;
+      font-size: inherit;
+      line-height: inherit;
+
+      &:empty::before {
+        content: attr(data-placeholder);
+        color: var(--el-text-color-placeholder);
+      }
+    }
+
+    :deep(.el-sender-slot-select-arrow) {
+      margin-inline-start: 2px;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--el-text-color-secondary);
+    }
+
+    /* 固定标签词槽 */
+    :deep(.el-sender-slot-tag) {
+      background: var(--el-fill-color-light);
+      border: 1px solid var(--el-border-color);
+      outline: none;
+      color: var(--el-text-color-regular);
+      border-radius: var(--el-border-radius-base);
+      padding: 0 4px;
+      font-size: inherit;
+      line-height: 22px;
+      height: 100%;
+      box-sizing: border-box;
+      position: relative;
+      cursor: default;
+    }
+
+    /* 下拉 popper：teleport 到 body，样式见文件末尾全局区块 */
+
+    /* @技能芯片 */
+    :deep(.el-sender-skill) {
+      display: inline-block;
+      vertical-align: baseline;
+      margin-block: 1px;
+      height: 24px;
+      word-break: break-all;
+      margin-inline-start: -1px;
+
+      &.el-sender-skill-empty::after {
+        display: inline-block;
+        pointer-events: none;
+        height: inherit;
+        content: attr(data-placeholder);
+        color: var(--el-text-color-placeholder);
+      }
+    }
+
+    :deep(.el-sender-skill-wrapper) {
+      height: 100%;
+      display: inline-flex;
+    }
+
+    :deep(.el-sender-skill-tag) {
+      padding-inline: 8px;
+      height: 100%;
+      background-color: var(--el-color-primary-light-9);
+      border-radius: var(--el-border-radius-base);
+      color: var(--el-color-primary);
+      align-items: center;
+      font-weight: 500;
+      display: inline-flex;
+      cursor: pointer;
+      gap: 2px;
+      transition: background-color var(--el-transition-duration);
+
+      &:hover {
+        background-color: var(--el-color-primary-light-8);
+
+        .el-sender-skill-close:not(.el-sender-skill-close-disabled) {
+          color: var(--el-color-primary-light-3);
+        }
+      }
+    }
+
+    :deep(.el-sender-skill-close) {
+      font-size: 12px;
+      display: inline-flex;
+      transition: color var(--el-transition-duration);
+      color: var(--el-color-primary);
+    }
+
+    :deep(.el-sender-skill-close-disabled) {
+      cursor: not-allowed;
+      color: var(--el-text-color-disabled);
+    }
+
+    :deep(.el-sender-skill-holder) {
+      width: 6px;
+      height: 100%;
+    }
+  }
+}
+
+/* 下拉词槽 popper（teleport 到 body，全局样式） */
+:deep(.el-sender-slot-select-popper) {
+  .el-dropdown-menu__item.el-sender-slot-select-option-active {
+    color: var(--el-color-primary);
+    background-color: var(--el-color-primary-light-9);
+  }
+}

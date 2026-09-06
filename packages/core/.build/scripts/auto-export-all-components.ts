@@ -37,7 +37,22 @@ const componentTypeExports: Record<string, string[]> = {
   ],
   MentionSender: ['MentionOption', 'MentionSenderProps', 'MentionSenderEmits'],
   Prompts: ['PromptsItemsProps', 'PromptsProps', 'PromptsEmits'],
-  Sender: ['SenderProps', 'TriggerEvent', 'SenderEmits'],
+  Sender: [
+    'InsertPosition',
+    'SenderProps',
+    'TriggerEvent',
+    'SenderEmits',
+    'SenderFocusOptions',
+    'SenderSlotValue',
+    'SkillType',
+    'SlotConfigType',
+    'SlotConfigTextType',
+    'SlotConfigContentType',
+    'SlotConfigInputType',
+    'SlotConfigSelectType',
+    'SlotConfigTagType',
+    'SlotConfigCustomType'
+  ],
   Thinking: ['ThinkingStatus', 'ThinkingProps', 'ThinkingEmits'],
   ThoughtChain: [
     'HexColor',

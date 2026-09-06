@@ -2,6 +2,7 @@ import type SenderSource from '@components/Sender/index.vue';
 import type { Meta, StoryObj } from '@storybook/vue3';
 import CustomSolt from './CustomSolt.vue';
 import Sender from './index.vue';
+import SlotSenderDemo from './SlotSenderDemo.vue';
 
 const meta: Meta<typeof SenderSource> = {
   title: 'Example/Sender 输入框',
@@ -226,5 +227,14 @@ export const SlotDemo: Story = {
         v-model:triggerPopoverVisible="triggerVisible"
       />
     `
+  })
+};
+
+/** 词槽模式（Slot Mode）：contenteditable + 结构化词槽 + @技能 */
+export const SlotSenderModeDemo: Story = {
+  name: '词槽模式',
+  render: () => ({
+    components: { SlotSenderDemo },
+    template: `<SlotSenderDemo />`
   })
 };

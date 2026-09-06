@@ -21,6 +21,9 @@ export default defineConfig({
     AutoImport({
       imports: ['vue'],
       ignore: ['h', 'ClientOnly'],
+      // 排除 core 构建产物：Rollup 重命名标识符（如 ElCollection$1）会被误判为
+      // 未定义标识符，触发 ElementPlusResolver 注入不存在的样式导入路径
+      exclude: [/[\\/]node_modules[\\/]/, /[\\/]\.git[\\/]/, /[\\/]dist[\\/]/],
       eslintrc: {
         enabled: true
       },

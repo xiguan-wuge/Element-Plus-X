@@ -13,7 +13,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const decodeNamedCharacterReferenceShimPath = path.resolve(__dirname, 'shims/decode-named-character-reference.js');
 
 function decodeNamedCharacterReferenceShim(): Plugin {
-  const domIdRe = /decode-named-character-reference[\\/]+index\.dom\.js(?:\\?.*)?$/;
+  const domIdRe = /decode-named-character-reference[\\/]+index\.dom\.js.*$/;
   const shimCode = `import { characterEntities } from 'character-entities';
 
 const own = {}.hasOwnProperty;
@@ -46,8 +46,7 @@ export function decodeNamedCharacterReference(value) {
   };
 }
 
-
-console.log('x-path', path.resolve(__dirname, '../../../packages/components/src/index.ts'))
+console.log('x-path', path.resolve(__dirname, '../../../packages/components/src/index.ts'));
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
   title: 'Element-Plus-X',
@@ -92,14 +91,18 @@ export default defineConfig({
   },
   vite: {
     resolve: {
-      conditions: ['node', 'default'],
+      // 客户端必须用浏览器条件。此前写成 ['node', 'default'] 会连带依赖预构建
+      // 也按 node 条件解析，@vue/* 命中 CJS 构建导致预构建产物丢失命名导出
+      // （报错：does not provide an export named 'computed'），页面白屏。
+      // SSR 走下方 ssr.resolve.conditions 的 node 条件，互不影响。
+      conditions: ['module', 'browser', 'development', 'production'],
       alias: [
         {
           find: /^decode-named-character-reference$/,
           replacement: decodeNamedCharacterReferenceShimPath,
         },
         {
-          find: /decode-named-character-reference[\\/]+index\.dom\.js(?:\\?.*)?$/,
+          find: /decode-named-character-reference[\\/]+index\.dom\.js.*$/,
           replacement: decodeNamedCharacterReferenceShimPath,
         },
         {
@@ -125,7 +128,8 @@ export default defineConfig({
     ],
     optimizeDeps: {
       esbuildOptions: {
-        conditions: ['node', 'default'],
+        // 显式指定浏览器条件，防止回落继承 resolve.conditions 里的 node 条件
+        conditions: ['module', 'browser', 'development', 'production'],
       },
     },
     ssr: {

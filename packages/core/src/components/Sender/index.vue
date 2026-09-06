@@ -1,9 +1,16 @@
 <script setup lang="ts">
-import type { SenderEmits, SenderProps } from './types.d.ts';
+import type {
+  SenderEmits,
+  SenderFocusOptions,
+  SenderProps,
+  SenderSlotValue,
+  SlotConfigType
+} from './types.d.ts';
 import {
   ClearButton,
   LoadingButton,
   SendButton,
+  SlotTextArea,
   SpeechButton,
   SpeechLoadingButton
 } from './components';
@@ -31,7 +38,11 @@ const props = withDefaults(defineProps<SenderProps>(), {
   triggerPopoverWidth: 'fit-content',
   triggerPopoverLeft: '0px',
   triggerPopoverOffset: 8,
-  triggerPopoverPlacement: 'top-start'
+  triggerPopoverPlacement: 'top-start',
+
+  // 词槽模式
+  slotConfig: undefined,
+  skill: undefined
 });
 
 const emits = defineEmits<SenderEmits>();
@@ -56,11 +67,35 @@ const internalValue = computed({
     return props.modelValue;
   },
   set(val) {
-    if (props.readOnly || props.disabled)
-      return;
+    if (props.readOnly || props.disabled) return;
     emits('update:modelValue', val);
   }
 });
+
+/* ===================== 词槽模式（Slot Mode）开始 ===================== */
+/** 词槽编辑器实例 */
+const slotInputRef = ref<InstanceType<typeof SlotTextArea> | null>(null);
+/** 词槽模式下的纯文本值（用于提交按钮禁用判断） */
+const slotTextValue = ref('');
+/** 是否为词槽模式：传入 slotConfig 数组或有效 skill 时启用 */
+const isSlotMode = computed(
+  () => Array.isArray(props.slotConfig) || !!props.skill?.value
+);
+
+/** 词槽编辑器值变更 */
+function handleSlotChange(value: string) {
+  slotTextValue.value = value;
+  if (props.readOnly || props.disabled) return;
+  emits('update:modelValue', value);
+}
+
+/** 词槽模式粘贴文件 */
+function handleSlotPasteFile(files: FileList) {
+  if (files?.length) {
+    emits('pasteFile', files[0], files);
+  }
+}
+/* ===================== 词槽模式（Slot Mode）结束 ===================== */
 
 const inputInstance = computed(() => inputRef.value?.ref);
 
@@ -78,8 +113,8 @@ const isSubmitDisabled = computed(() => {
   if (typeof props.submitBtnDisabled === 'boolean') {
     return props.submitBtnDisabled;
   }
-  // 否则保持默认逻辑：无内容时禁用
-  return !internalValue.value;
+  // 否则保持默认逻辑：无内容时禁用（词槽模式取编辑器纯文本值）
+  return !(isSlotMode.value ? slotTextValue.value : internalValue.value);
 });
 
 const popoverVisible = computed({
@@ -87,8 +122,7 @@ const popoverVisible = computed({
     return props.triggerPopoverVisible;
   },
   set(value) {
-    if (props.readOnly || props.disabled)
-      return;
+    if (props.readOnly || props.disabled) return;
     emits('update:triggerPopoverVisible', value);
   }
 });
@@ -100,8 +134,9 @@ const triggerString = ref('');
 watch(
   () => internalValue.value,
   (newVal, oldVal) => {
-    if (isComposing.value)
-      return;
+    // 词槽模式下不启用触发指令逻辑（词槽本身就是结构化指令）
+    if (isSlotMode.value) return;
+    if (isComposing.value) return;
     // 触发逻辑：当输入值等于数组中的任意一个指令字符时触发
     // 确保 oldVal 是字符串类型
     const triggerStrings = props.triggerStrings || []; // 如果为 undefined，就使用空数组
@@ -120,8 +155,7 @@ watch(
           isOpen: true
         });
         popoverVisible.value = true;
-      }
-      else {
+      } else {
         popoverVisible.value = true;
       }
     }
@@ -135,8 +169,7 @@ watch(
           isOpen: false
         });
         popoverVisible.value = false;
-      }
-      else {
+      } else {
         popoverVisible.value = false;
       }
     }
@@ -151,8 +184,7 @@ watch(
           isOpen: true
         });
         popoverVisible.value = true;
-      }
-      else {
+      } else {
         popoverVisible.value = true;
       }
     }
@@ -162,30 +194,39 @@ watch(
 
 /* 内容容器聚焦 开始 */
 function onContentMouseDown(e: MouseEvent) {
-  // 点击容器后设置输入框的聚焦，会触发 &:focus-within 样式
-  if (e.target !== senderRef.value.querySelector(`.el-textarea__inner`)) {
+  // 词槽模式：编辑区内部的 mousedown（文本光标定位 / content 词槽 / 原子块）由 SlotTextArea
+  // 的 onInternalMouseDown 处理，容器不介入，避免无条件 focus() 把光标强制拉到末尾；
+  // 仅处理编辑区外（容器留白 / 操作区）的点击：聚焦编辑器并定位光标到末尾
+  if (isSlotMode.value) {
+    const editorEl = slotInputRef.value?.nativeElement;
+    if (editorEl && editorEl.contains(e.target as Node)) {
+      return;
+    }
+    e.preventDefault();
+    slotInputRef.value?.focus({ cursor: 'end' });
+    return;
+  }
+  // 文本模式：点击容器后设置输入框的聚焦，会触发 &:focus-within 样式
+  const targetInput = senderRef.value?.querySelector('.el-textarea__inner');
+  if (e.target !== targetInput) {
     e.preventDefault();
   }
-  inputRef.value.focus();
+  inputRef.value?.focus();
 }
 /* 内容容器聚焦 结束 */
 
 /* 头部显示隐藏 开始 */
 const visiableHeader = ref(false);
 function openHeader() {
-  if (!slots.header)
-    return false;
+  if (!slots.header) return false;
 
-  if (props.readOnly)
-    return false;
+  if (props.readOnly) return false;
 
   visiableHeader.value = true;
 }
 function closeHeader() {
-  if (!slots.header)
-    return;
-  if (props.readOnly)
-    return;
+  if (!slots.header) return;
+  if (props.readOnly) return;
   visiableHeader.value = false;
 }
 /* 头部显示隐藏 结束 */
@@ -195,8 +236,7 @@ const recognition = ref<SpeechRecognition | null>(null);
 const speechLoading = ref<boolean>(false);
 
 function startRecognition() {
-  if (props.readOnly)
-    return; // 直接返回，不执行后续逻辑
+  if (props.readOnly) return; // 直接返回，不执行后续逻辑
   if (hasOnRecordingChangeListener.value) {
     speechLoading.value = true;
     emits('recordingChange', true);
@@ -213,7 +253,12 @@ function startRecognition() {
         results += event.results[i][0].transcript;
       }
       if (!props.readOnly) {
-        internalValue.value = results;
+        if (isSlotMode.value) {
+          // 词槽模式：在光标处插入语音转写文本
+          slotInputRef.value?.insert([{ type: 'text', value: results }]);
+        } else {
+          internalValue.value = results;
+        }
       }
     };
     recognition.value.onstart = () => {
@@ -227,8 +272,7 @@ function startRecognition() {
       speechLoading.value = false;
     };
     recognition.value.start();
-  }
-  else {
+  } else {
     console.error('浏览器不支持 Web Speech API');
   }
 }
@@ -257,26 +301,38 @@ function submit() {
   ) {
     return;
   }
+  if (isSlotMode.value) {
+    // 词槽模式：返回纯文本 + 结构化词槽 + 技能
+    const result: SenderSlotValue | undefined = slotInputRef.value?.getValue();
+    if (!result) {
+      return;
+    }
+    emits('submit', result.value, result.slotConfig, result.skill);
+    return;
+  }
   emits('submit', internalValue.value);
 }
 // 取消按钮
 function cancel() {
-  if (props.readOnly)
-    return;
+  if (props.readOnly) return;
   emits('cancel', internalValue.value);
 }
 
 function clear() {
-  if (props.readOnly)
-    return; // 直接返回，不执行后续逻辑
+  if (props.readOnly) return; // 直接返回，不执行后续逻辑
+  if (isSlotMode.value) {
+    slotInputRef.value?.clear();
+    slotTextValue.value = '';
+    emits('update:modelValue', '');
+    return;
+  }
   inputRef.value.clear();
   internalValue.value = '';
 }
 
 // 在这判断组合键的回车键 (目前支持四种模式)
 function handleKeyDown(e: { target: HTMLTextAreaElement } & KeyboardEvent) {
-  if (props.readOnly)
-    return; // 直接返回，不执行后续逻辑
+  if (props.readOnly) return; // 直接返回，不执行后续逻辑
   const _resetSelectionRange = () => {
     const cursorPosition = e.target.selectionStart; // 获取光标位置
     const textBeforeCursor = internalValue.value.slice(0, cursorPosition); // 光标前的文本
@@ -307,8 +363,7 @@ function handleKeyDown(e: { target: HTMLTextAreaElement } & KeyboardEvent) {
     e.preventDefault();
     if (props.submitType === 'enter') {
       _isComKeyDown ? _resetSelectionRange() : submit();
-    }
-    else {
+    } else {
       _isComKeyDown ? submit() : _resetSelectionRange();
     }
   }
@@ -320,20 +375,31 @@ function blur() {
   if (props.readOnly) {
     return false;
   }
+  if (isSlotMode.value) {
+    slotInputRef.value?.blur();
+    return;
+  }
   inputRef.value.blur();
 }
 
-function focus(type = 'all') {
+function focus(type: string | SenderFocusOptions = 'all') {
   if (props.readOnly) {
     return false;
   }
+  // 词槽模式：支持 { cursor, key, preventScroll } 选项
+  if (isSlotMode.value) {
+    if (typeof type === 'object') {
+      slotInputRef.value?.focus(type);
+    } else {
+      slotInputRef.value?.focus({ cursor: (type as any) || 'end' });
+    }
+    return;
+  }
   if (type === 'all') {
     inputRef.value.select();
-  }
-  else if (type === 'start') {
+  } else if (type === 'start') {
     focusToStart();
-  }
-  else if (type === 'end') {
+  } else if (type === 'end') {
     focusToEnd();
   }
 }
@@ -383,6 +449,41 @@ function handleInternalPaste(e: ClipboardEvent) {
   }
 }
 
+/** 词槽模式：插入文本/词槽（透传词槽编辑器） */
+function insert(
+  slotConfig: SlotConfigType[],
+  position?: 'start' | 'end' | 'cursor',
+  replaceCharacters?: string,
+  preventScroll?: boolean
+) {
+  if (!isSlotMode.value) {
+    console.warn(
+      '[ElementPlusX Sender] insert() 仅在词槽模式（传入 slotConfig 或 skill）下可用'
+    );
+    return;
+  }
+  slotInputRef.value?.insert(
+    slotConfig,
+    position,
+    replaceCharacters,
+    preventScroll
+  );
+}
+
+/** 获取完整输入内容（词槽模式返回结构化结果，文本模式返回纯文本） */
+function getValue(): SenderSlotValue {
+  if (isSlotMode.value) {
+    return (
+      slotInputRef.value?.getValue() ?? {
+        value: '',
+        slotConfig: [],
+        skill: undefined
+      }
+    );
+  }
+  return { value: internalValue.value, slotConfig: [], skill: undefined };
+}
+
 defineExpose({
   openHeader, // 打开头部
   closeHeader, // 关闭头部
@@ -395,7 +496,10 @@ defineExpose({
   startRecognition,
   stopRecognition,
   popoverVisible,
-  inputInstance
+  inputInstance,
+  // 词槽模式
+  insert,
+  getValue
 });
 </script>
 
@@ -443,8 +547,9 @@ defineExpose({
         >
           <slot name="prefix" />
         </div>
-        <!-- 输入框 -->
+        <!-- 输入框（文本模式） -->
         <el-input
+          v-if="!isSlotMode"
           ref="inputRef"
           v-model="internalValue"
           class="el-sender-input"
@@ -466,6 +571,21 @@ defineExpose({
           @compositionstart="handleCompositionStart"
           @compositionend="handleCompositionEnd"
           @paste="handleInternalPaste"
+        />
+        <!-- 输入框（词槽模式：contenteditable 编辑器） -->
+        <SlotTextArea
+          v-else
+          ref="slotInputRef"
+          :placeholder="placeholder"
+          :read-only="readOnly || disabled"
+          :disabled="disabled"
+          :submit-type="submitType"
+          :auto-size="autoSize"
+          :slot-config="slotConfig"
+          :skill="skill"
+          @send="submit"
+          @change="handleSlotChange"
+          @paste-file="handleSlotPasteFile"
         />
         <!-- 操作列表 -->
         <div v-if="props.variant === 'default'" class="el-sender-action-list">
